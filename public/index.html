@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/css/bootstrap.min.css"
+        integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+</head>
+
+<body>
+    <div class="container mt-5 ">
+        <h1>To-Do List</h1>
+        <ul class="list-group" id="todo-list">
+            <!-- To-Do items will be dynamically added here -->
+        </ul>
+        <br>
+        <form id="add-todo-form">
+            <input type="text" name="task" placeholder="Add a new task..." class="form-control">
+            <br>
+            <button type="submit" class="btn btn-primary">Add Task</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const todoList = document.getElementById('todo-list');
+
+            function renderTodos() {
+                const todos = getTodosFromSessionStorage();
+                todoList.innerHTML = '';
+                todos.forEach((todo, index) => {
+                    const listItem = document.createElement('li');
+                    listItem.className = 'list-group-item d-flex justify-content-between';
+                    const strikeText = todo.completed ? `<strike>${todo.task}</strike>` : `${todo.task}`;
+                    const completedTime = todo.completed ? `<span class="completed-time">Completed at: ${todo.completedTime}</span>` : '';
+                    listItem.innerHTML = `
+                        ${strikeText} ${completedTime}
+                        <div>
+                            <button type="button" class="btn btn-sm btn-success complete-btn">✓</button>
+                            <button type="button" class="btn btn-sm btn-danger delete-btn">×</button>
+                        </div>
+                    `;
+                    listItem.querySelector('.complete-btn').addEventListener('click', () => completeTask(index));
+                    listItem.querySelector('.delete-btn').addEventListener('click', () => deleteTask(index));
+                    todoList.appendChild(listItem);
+                });
+            }
+
+            function getTodosFromSessionStorage() {
+                return JSON.parse(sessionStorage.getItem('todos')) || [];
+            }
+
+            function saveTodosToSessionStorage(todos) {
+                sessionStorage.setItem('todos', JSON.stringify(todos));
+            }
+
+            function updateTodos() {
+                renderTodos();
+            }
+
+            function completeTask(index) {
+                const todos = getTodosFromSessionStorage();
+                todos[index].completed = true;
+                todos[index].completedTime = new Date().toLocaleString(); // Save the completed time
+                saveTodosToSessionStorage(todos);
+                updateTodos();
+            }
+
+            function deleteTask(index) {
+                const todos = getTodosFromSessionStorage();
+                todos.splice(index, 1);
+                saveTodosToSessionStorage(todos);
+                updateTodos();
+            }
+
+            document.getElementById('add-todo-form').addEventListener('submit', function (event) {
+                event.preventDefault();
+                const newTaskInput = document.querySelector('input[name="task"]');
+                const newTask = newTaskInput.value.trim();
+                if (newTask !== '') {
+                    const todos = getTodosFromSessionStorage();
+                    todos.push({ task: newTask, completed: false });
+                    saveTodosToSessionStorage(todos);
+                    newTaskInput.value = '';
+                    updateTodos();
+                }
+            });
+
+            renderTodos(); // Initial rendering
+        });
+    </script>
+</body>
+
+</html>
