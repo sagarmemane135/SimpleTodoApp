@@ -7,6 +7,7 @@ A Node JS TO-DO Application for CI/CD
 - `npm start`
 
 ## Installation on Docker
-- `docker build . -t listify-tasks`
-- `docker run -d -p 8000:8000 --name listify-tasks listify-tasks:latest`
+- `docker build . -t listify-task`
+- `docker run -d -p 8000:8000 --name listify-task listify-task:latest`
+- For DockerHub,  `docker run -d -p 8000:8000 --name listify-task memanes688/listify-task`
 - The Container will run on port 8000 
