@@ -7,8 +7,8 @@ WORKDIR /app
 # Copy the files into Working directory
 COPY public ./public
 COPY app.js ./
-COPY README>md ./
-COPY package.json
+COPY README.md ./
+COPY package.json ./
 
 # Install dependencies
 RUN npm install
